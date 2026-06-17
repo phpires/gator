@@ -18,7 +18,7 @@ func main() {
 
 	appState.configState = &cfg
 	appCommands.handlers = map[string]func(*state, command) error{}
-	appCommands.handlers["login"] = handlerLogin
+	appCommands.register("login", handlerLogin)
 
 	userArgs := os.Args
 	if len(userArgs) < 2 {
