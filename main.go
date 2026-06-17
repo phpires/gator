@@ -1,28 +1,38 @@
 package main
 
 import (
-	"fmt"
 	"log"
+	"os"
 
 	"github.com/phpires/gator/internal/config"
 )
 
 func main() {
-	username := "MrPiresz"
+	var appState state
+	var appCommands commands
+
 	cfg, err := config.Read()
 	if err != nil {
 		log.Fatalf("error while trying reading config: %v", err)
 	}
 
-	err = cfg.SetUser(username)
-	if err != nil {
-		log.Fatalf("error while trying to set user config: %v", err)
+	appState.configState = &cfg
+	appCommands.handlers = map[string]func(*state, command) error{}
+	appCommands.handlers["login"] = handlerLogin
+
+	userArgs := os.Args
+	if len(userArgs) < 2 {
+		log.Fatalf("Takes at least one argument to execute gator")
 	}
 
-	cfg, err = config.Read()
-	if err != nil {
-		log.Fatalf("error while trying reading config: %v", err)
+	userCmd := command{
+		name: userArgs[1],
+		args: userArgs[2:],
 	}
 
-	fmt.Printf("db_url: %v\nusername: %v\n", cfg.DbUrl, cfg.CurrentUserName)
+	err = appCommands.run(&appState, userCmd)
+	if err != nil {
+		log.Fatalf("Error running command: %v", err)
+	}
+
 }
