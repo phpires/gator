@@ -1,11 +1,19 @@
 package main
 
 import (
+	"database/sql"
 	"log"
 	"os"
 
+	_ "github.com/lib/pq"
 	"github.com/phpires/gator/internal/config"
+	"github.com/phpires/gator/internal/database"
 )
+
+type state struct {
+	configState *config.Config
+	dbState     *database.Queries
+}
 
 func main() {
 	var appState state
@@ -19,6 +27,13 @@ func main() {
 	appState.configState = &cfg
 	appCommands.handlers = map[string]func(*state, command) error{}
 	appCommands.register("login", handlerLogin)
+	appCommands.register("register", handlerRegister)
+
+	db, err := sql.Open("postgres", cfg.DbUrl)
+	if err != nil {
+		log.Fatalf("error while trying to connect to dabase: %v", err)
+	}
+	appState.dbState = database.New(db)
 
 	userArgs := os.Args
 	if len(userArgs) < 2 {
