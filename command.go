@@ -1,7 +1,7 @@
 package main
 
 import (
-	"errors"
+	"fmt"
 )
 
 type command struct {
@@ -16,7 +16,7 @@ type commands struct {
 func (c *commands) run(s *state, cmd command) error {
 	commandFunction, ok := c.handlers[cmd.Name]
 	if !ok {
-		return errors.New("No function registered.")
+		return fmt.Errorf("Invalid command")
 	}
 	return commandFunction(s, cmd)
 }
