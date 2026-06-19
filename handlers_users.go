@@ -12,17 +12,17 @@ import (
 
 func handlerLogin(s *state, cmd command) error {
 	if len(cmd.Args) == 0 {
-		return fmt.Errorf("usage: %v <name>", cmd.Name)
+		return fmt.Errorf("usage: %v <name>\n", cmd.Name)
 	}
 	username := cmd.Args[0]
 	_, err := s.dbState.GetUserByName(context.Background(), username)
 	if err != nil {
-		return fmt.Errorf("Couldn't find user: %w", err)
+		return fmt.Errorf("Couldn't find user: %w\n", err)
 	}
 
 	err = s.configState.SetUser(username)
 	if err != nil {
-		return fmt.Errorf("Couldn't set current user: %w", err)
+		return fmt.Errorf("Couldn't set current user: %w\n", err)
 	}
 
 	fmt.Println("User set.")
@@ -31,7 +31,7 @@ func handlerLogin(s *state, cmd command) error {
 
 func handlerRegister(s *state, cmd command) error {
 	if len(cmd.Args) == 0 {
-		return fmt.Errorf("usage: %v <name>", cmd.Name)
+		return fmt.Errorf("usage: %v <name>\n", cmd.Name)
 	}
 
 	createUsr := database.CreateUserParams{
@@ -43,7 +43,7 @@ func handlerRegister(s *state, cmd command) error {
 
 	user, err := s.dbState.CreateUser(context.Background(), createUsr)
 	if err != nil {
-		return fmt.Errorf("Error creating user: %w", err)
+		return fmt.Errorf("Error creating user: %w\n", err)
 	}
 
 	log.Println("User created.")
@@ -51,7 +51,7 @@ func handlerRegister(s *state, cmd command) error {
 
 	err = s.configState.SetUser(user.Name)
 	if err != nil {
-		return fmt.Errorf("Error setting user: %w", err)
+		return fmt.Errorf("Error setting user: %w\n", err)
 	}
 	return nil
 }
@@ -59,7 +59,7 @@ func handlerRegister(s *state, cmd command) error {
 func handlerReset(s *state, cmd command) error {
 	err := s.dbState.DeleteAllUsers(context.Background())
 	if err != nil {
-		return fmt.Errorf("Error deleting all users: %w", err)
+		return fmt.Errorf("Error deleting all users: %w\n", err)
 	}
 	log.Println("Users removed.")
 	s.configState.SetUser("")
@@ -70,7 +70,7 @@ func handlerListUsers(s *state, cmd command) error {
 	users, err := s.dbState.ListUsers(context.Background())
 
 	if err != nil {
-		return fmt.Errorf("Error listing users: %w", err)
+		return fmt.Errorf("Error listing users: %w\n", err)
 	}
 
 	currentUser := s.configState.CurrentUserName
