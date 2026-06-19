@@ -65,3 +65,22 @@ func handlerReset(s *state, cmd command) error {
 	s.configState.SetUser("")
 	return nil
 }
+
+func handlerListUsers(s *state, cmd command) error {
+	users, err := s.dbState.ListUsers(context.Background())
+
+	if err != nil {
+		return fmt.Errorf("Error listing users: %w", err)
+	}
+
+	currentUser := s.configState.CurrentUserName
+
+	for _, user := range users {
+		if user.Name == currentUser {
+			fmt.Printf("%v (current)\n", currentUser)
+			continue
+		}
+		fmt.Println(user.Name)
+	}
+	return nil
+}
