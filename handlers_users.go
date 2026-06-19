@@ -59,7 +59,7 @@ func handlerRegister(s *state, cmd command) error {
 func handlerReset(s *state, cmd command) error {
 	err := s.dbState.DeleteAllUsers(context.Background())
 	if err != nil {
-		return err
+		return fmt.Errorf("Error deleting all users: %w", err)
 	}
 	log.Println("Users removed.")
 	s.configState.SetUser("")
