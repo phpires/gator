@@ -28,6 +28,7 @@ func main() {
 	appCommands.handlers = map[string]func(*state, command) error{}
 	appCommands.register("login", handlerLogin)
 	appCommands.register("register", handlerRegister)
+	appCommands.register("reset", handlerReset)
 
 	db, err := sql.Open("postgres", cfg.DbUrl)
 	if err != nil {
@@ -41,8 +42,8 @@ func main() {
 	}
 
 	userCmd := command{
-		name: userArgs[1],
-		args: userArgs[2:],
+		Name: userArgs[1],
+		Args: userArgs[2:],
 	}
 
 	err = appCommands.run(&appState, userCmd)
