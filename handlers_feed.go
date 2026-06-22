@@ -9,6 +9,22 @@ import (
 	"github.com/phpires/gator/internal/database"
 )
 
+func handlerListFeeds(s *state, cmd command) error {
+	feeds, err := s.dbState.ListFeeds(context.Background())
+	if err != nil {
+		return fmt.Errorf("Couldn't list feed: %w", err)
+	}
+	var userCreator database.User
+	for _, feed := range feeds {
+		userCreator, err = s.dbState.GetUserById(context.Background(), feed.UserID)
+		if err != nil {
+			return fmt.Errorf("Error getting user that created feed: %w", err)
+		}
+		fmt.Printf("Feed(name=%v, URL=%v, user=%v)\n", feed.Name, feed.Url, userCreator.Name)
+	}
+	return nil
+}
+
 func handlerFetch(s *state, cmd command) error {
 	rssFeed, err := fetchFeed(context.Background(), "https://www.wagslane.dev/index.xml")
 	if err != nil {
@@ -42,11 +58,11 @@ func handlerAddFeeds(s *state, cmd command) error {
 		return fmt.Errorf("Error creating feed: %w", err)
 	}
 
-	printFeed(feed)
+	printFeedToUser(feed)
 	return nil
 }
 
-func printFeed(feed database.Feed) {
+func printFeedToUser(feed database.Feed) {
 	fmt.Println("Feed created:")
 	fmt.Printf(" * ID: %v\n", feed.ID)
 	fmt.Printf(" * CreatedAt: %v\n", feed.CreatedAt)
