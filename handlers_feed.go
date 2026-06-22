@@ -40,17 +40,12 @@ func handlerFetch(s *state, cmd command) error {
 	return nil
 }
 
-func handlerAddFeeds(s *state, cmd command) error {
+func handlerAddFeeds(s *state, cmd command, user database.User) error {
 	if len(cmd.Args) != 2 {
 		return fmt.Errorf("usage: %v <name> <url>", cmd.Name)
 	}
 	feedName := cmd.Args[0]
 	feedUrl := cmd.Args[1]
-
-	currentUser, err := s.dbState.GetUserByName(context.Background(), s.configState.CurrentUserName)
-	if err != nil {
-		return fmt.Errorf("Error retrieving user: %w", err)
-	}
 
 	feed, err := s.dbState.CreateFeed(context.Background(), database.CreateFeedParams{
 		ID:        uuid.New(),
@@ -58,13 +53,25 @@ func handlerAddFeeds(s *state, cmd command) error {
 		UpdatedAt: time.Now(),
 		Name:      feedName,
 		Url:       feedUrl,
-		UserID:    currentUser.ID,
+		UserID:    user.ID,
 	})
 	if err != nil {
 		return fmt.Errorf("Error creating feed: %w", err)
 	}
 
-	printFeedToUser(feed, currentUser)
+	fmt.Println("Linking feed to user.")
+	_, err = s.dbState.CreateFeedFollow(context.Background(), database.CreateFeedFollowParams{
+		ID:        uuid.New(),
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
+		UserID:    user.ID,
+		FeedID:    feed.ID,
+	})
+	if err != nil {
+		return fmt.Errorf("Error linking feed to user: %w", err)
+	}
+
+	printFeedToUser(feed, user)
 	return nil
 }
 

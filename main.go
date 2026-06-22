@@ -31,10 +31,10 @@ func main() {
 	appCommands.register("reset", handlerReset)
 	appCommands.register("users", handlerListUsers)
 	appCommands.register("agg", handlerFetch)
-	appCommands.register("addfeed", handlerAddFeeds)
+	appCommands.register("addfeed", middlewareLoggedIn(handlerAddFeeds))
 	appCommands.register("feeds", handlerListFeeds)
-	appCommands.register("follow", handlerFeedFollow)
-	appCommands.register("following", handlerFollowing)
+	appCommands.register("follow", middlewareLoggedIn(handlerFeedFollow))
+	appCommands.register("following", middlewareLoggedIn(handlerFollowing))
 
 	db, err := sql.Open("postgres", cfg.DbUrl)
 	if err != nil {
