@@ -9,6 +9,27 @@ import (
 	"github.com/phpires/gator/internal/database"
 )
 
+func handlerUnfollow(s *state, cmd command, user database.User) error {
+
+	if len(cmd.Args) != 1 {
+		return fmt.Errorf("usage: %v <feed_url>", user.Name)
+	}
+
+	feed, err := s.dbState.GetFeedByUrl(context.Background(), cmd.Args[0])
+	if err != nil {
+		return fmt.Errorf("Error getting feed by url: %w\n", err)
+	}
+
+	err = s.dbState.DeleteFeedFollowForUser(context.Background(), database.DeleteFeedFollowForUserParams{
+		UserID: user.ID,
+		FeedID: feed.ID,
+	})
+	if err != nil {
+		return fmt.Errorf("Error unfollowing feed: %w", err)
+	}
+	return nil
+}
+
 func handlerFollowing(s *state, cmd command, user database.User) error {
 
 	feedsFollowedByUser, err := s.dbState.GetFeedFollowsForUser(context.Background(), user.ID)
