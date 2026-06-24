@@ -31,15 +31,6 @@ func handlerListFeeds(s *state, cmd command) error {
 	return nil
 }
 
-func handlerFetch(s *state, cmd command) error {
-	rssFeed, err := fetchFeed(context.Background(), "https://www.wagslane.dev/index.xml")
-	if err != nil {
-		return fmt.Errorf("couldn't fetch feed: %w", err)
-	}
-	fmt.Println(rssFeed)
-	return nil
-}
-
 func handlerAddFeeds(s *state, cmd command, user database.User) error {
 	if len(cmd.Args) != 2 {
 		return fmt.Errorf("usage: %v <name> <url>", cmd.Name)

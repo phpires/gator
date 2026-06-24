@@ -30,7 +30,7 @@ func main() {
 	appCommands.register("register", handlerRegister)
 	appCommands.register("reset", handlerReset)
 	appCommands.register("users", handlerListUsers)
-	appCommands.register("agg", handlerFetch)
+	appCommands.register("agg", handlerAgg)
 	appCommands.register("addfeed", middlewareLoggedIn(handlerAddFeeds))
 	appCommands.register("feeds", handlerListFeeds)
 	appCommands.register("follow", middlewareLoggedIn(handlerFeedFollow))
