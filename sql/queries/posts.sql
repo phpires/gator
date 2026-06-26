@@ -20,9 +20,12 @@ posts.title,
 posts.url,
 posts.description,
 posts.published_at,
-posts.feed_id FROM posts
+posts.feed_id,
+feeds.name as feed_name FROM posts
 INNER JOIN feed_follows 
     ON feed_follows.feed_id = posts.feed_id
+INNER JOIN feeds
+    ON posts.feed_id = feeds.id
 WHERE feed_follows.user_id = $1
 ORDER BY posts.published_at DESC
 LIMIT $2;

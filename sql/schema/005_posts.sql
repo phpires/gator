@@ -6,9 +6,9 @@ CREATE TABLE posts(
     title TEXT NOT NULL,
     url TEXT NOT NULL UNIQUE,
     description TEXT,
-    published_at TEXT NOT NULL,
+    published_at TIMESTAMP,
     feed_id UUID NOT NULL
-)
+);
 
 -- +goose Down
 DROP TABLE posts;
